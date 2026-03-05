@@ -1,0 +1,808 @@
+/* Global Reset and Setup - African Violet Palette with F1D0D4 Pink */
+:root {
+  --color-primary: #a575aa;    /* African Violet - Primary Accent (Highlight/CTA) */
+  --color-secondary-accent: #2887b0; /* Blue (NCS) - Secondary Accent (Signup/Headers) */
+  --color-hover-outline: #66416a; /* African Violet 300 - Darker outline for button hover */
+  
+  --color-text-dark: #083d3b;    /* Midnight Green - Dark Text (on light backgrounds) */
+  --color-text-light: #eddf82;   /* Flax - Light Yellow/Gold Text (on dark backgrounds) */
+  --color-text-secondary: #eddf82; /* Flax for secondary light text */
+  
+  --color-bg-darkest: #083d3b;   /* Midnight Green - Footer/Hero Overlay/Base */
+  --color-bg-main: #083d3b;     /* Midnight Green - Base BG */ 
+  --color-bg-lightest: #F1D0D4;  /* Soft Pink (#F1D0D4) - Sliding Section BG/Navbar BG/Card BG */
+  
+  /* Modal Colors */
+  --color-modal-bg-dark: var(--color-bg-darkest); /* Midnight Green */
+  --color-modal-bg-accent: #eddf82; /* Flax Yellow */
+  --color-form-bg: white;
+  --color-form-text: #4a4a4a;
+}
+
+/* --- LEAFLET CSS IMPORTS --- */
+@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+
+html, body, #root, .app-container {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  color: var(--color-text-light); /* Flax text on dark base */
+  background-color: var(--color-bg-main); /* Midnight Green base */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Navbar - FLOATING TAB with UNIFORM CURVES */
+.navbar {
+  position: fixed;
+  top: 10px; 
+  left: 50%; 
+  transform: translateX(-50%);
+  width: calc(100% - 40px); 
+  max-width: 1400px; 
+
+  background: rgba(241, 208, 212, 0.95); /* Light Pink navbar (F1D0D4) */
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 3rem;
+  z-index: 2000;
+  
+  border-radius: 20px; 
+  
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+  border: none;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-text-dark); 
+}
+
+.logo span {
+  color: var(--color-primary); 
+}
+
+nav a {
+  color: var(--color-text-dark); 
+  margin: 0 20px;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: var(--color-primary);
+}
+
+/* Auth container fix (Prevents navbar resize on login/logout) */
+.auth {
+    min-width: 210px; /* Set fixed minimum width to prevent shift */
+    min-height: 40px; /* Set fixed minimum height to stabilize vertical layout */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Buttons */
+.btn {
+  border: none;
+  outline: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn.login {
+  background: transparent;
+  color: var(--color-text-dark);
+  border: 2px solid var(--color-text-dark);
+}
+.btn.signup {
+  background: var(--color-secondary-accent); 
+  color: var(--color-text-light); 
+  margin-left: 10px;
+}
+.btn.login:hover,
+.btn.signup:hover {
+  transform: scale(1.05);
+}
+
+/* New Account Icon Button Style */
+.btn.account-icon {
+    background: transparent;
+    color: var(--color-text-dark);
+    padding: 0;
+    margin-right: 10px;
+    height: 40px;
+    width: 40px;
+    border: 2px solid var(--color-primary);
+    border-radius: 50%;
+    overflow: hidden;
+}
+.btn.account-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn.logout-primary {
+    background: var(--color-primary);
+    color: white;
+    font-weight: 600;
+    padding: 10px 20px; /* Ensure padding is consistent */
+}
+
+
+/* HERO SECTION - FIXED BACKGROUND LAYER */
+.hero-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: url('https://images.unsplash.com/photo-1534531688091-a45825799205?auto=format&fit=crop&w=1920&q=80') no-repeat center/cover;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 10;
+  padding-top: 120px; 
+}
+.hero-fixed .overlay {
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%; width: 100%;
+  background: rgba(8, 61, 59, 0.75); 
+}
+
+.hero-content {
+  position: relative;
+  text-align: center;
+  max-width: 700px;
+  z-index: 100; 
+  padding: 20px;
+  margin-top: 15vh; 
+}
+
+.hero-content h1,
+.hero-content p {
+    color: var(--color-text-light); 
+}
+
+.hero-content h1 {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+}
+
+.hero-content h1 .highlight {
+  color: var(--color-primary); 
+  font-weight: 800;
+}
+.hero-content p {
+  color: var(--color-text-secondary);
+  margin-bottom: 30px;
+  font-size: 1.4rem;
+  line-height: 1.5;
+}
+
+/* --- Primary Button: Matte, Hover Glow/Outline, Click Ripple (CSS-Only) --- */
+.btn.primary {
+  background: var(--color-primary); 
+  color: var(--color-text-light); 
+  font-size: 1.1rem;
+  padding: 14px 40px;
+  border-radius: 10px;
+  font-weight: 700;
+  
+  /* MATTE DEFAULT */
+  border: 2px solid transparent; 
+  box-shadow: none; 
+  transition: all 0.3s ease;
+  
+  position: relative; 
+  overflow: hidden; 
+}
+
+/* Hover Effect: Toned down brightness + Dark Outline */
+.btn.primary:hover {
+  background: var(--color-primary); 
+  transform: scale(1.02);
+  border: 2px solid var(--color-hover-outline); 
+  box-shadow: 0 0 10px rgba(165, 117, 170, 0.6); 
+}
+
+/* Ripple effect container (The expanding circle) */
+.btn.primary::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 50%;
+    left: 50%;
+    background: rgba(255, 255, 255, 0.4); 
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: width 0.4s ease-out, height 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+/* Active State: Trigger the ripple expansion and intensify the glow */
+.btn.primary:active::after {
+    width: 250%;
+    height: 250%;
+    opacity: 0; 
+    transition: width 0.6s ease-out, height 0.6s ease-out, opacity 0.8s ease-out;
+}
+
+/* Intensified Click Glow (Enhances the "brightness to ripple outside" feel) */
+.btn.primary:active {
+    box-shadow: 0 0 18px 3px rgba(165, 117, 170, 0.9); 
+    transform: scale(1.01);
+}
+/* --- End Primary Button Styles --- */
+
+
+/* SCROLLING LAYERS */
+.scrolling-content {
+  position: relative;
+  z-index: 50;
+  background-color: transparent;
+  min-height: 100vh;
+}
+.scroll-push {
+  height: 100vh;
+  width: 100%;
+}
+.hero-button-anchor {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  z-index: 100;
+  position: relative;
+  margin-top: -240px;
+  margin-bottom: 240px;
+}
+
+/* CARD 2: HOW IT WORKS (Light Pink Glider) */
+.how-sliding {
+  background: var(--color-bg-lightest); /* LIGHT PINK */
+  padding: 100px 80px;
+  text-align: center;
+  position: relative;
+  z-index: 55; 
+  
+  border-top-left-radius: 40px; 
+  border-top-right-radius: 40px; 
+  
+  color: var(--color-text-dark); /* Dark text on light background */
+}
+
+.how-sliding h2 {
+  font-size: 2.5rem;
+  margin-bottom: 50px;
+  color: var(--color-primary); 
+}
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 10;
+}
+.card {
+  background: var(--color-bg-lightest); 
+  padding: 30px;
+  border-radius: 16px;
+  width: 300px;
+  transition: all 0.3s;
+  border: 1px solid var(--color-bg-lightest);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); 
+}
+.card:hover {
+  border-color: var(--color-secondary-accent); 
+  transform: translateY(-8px);
+  box-shadow: 0 10px 20px rgba(40, 135, 176, 0.5); 
+}
+.card h3 {
+  margin-bottom: 10px;
+  color: var(--color-primary); 
+}
+.card p {
+  color: var(--color-text-dark); 
+  font-size: 1rem;
+}
+
+/* REMAINING CONTENT */
+.coming {
+  padding: 100px 80px;
+  background: var(--color-bg-main); 
+  text-align: center;
+  color: var(--color-text-light);
+}
+.coming h2 {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  color: var(--color-secondary-accent); 
+}
+.coming p {
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Footer - REMOVED border-top */
+footer {
+  background: var(--color-bg-darkest); 
+  padding: 30px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary); 
+  border-top: none; 
+}
+
+/* Map Placeholder & Container */
+.map-placeholder {
+    padding: 0 80px 80px 80px; 
+    background: var(--color-bg-lightest);
+    color: var(--color-text-dark);
+    text-align: center;
+    min-height: 80vh; 
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    margin-top: 50px;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.map-placeholder h2 {
+    color: var(--color-primary);
+    margin-top: 50px;
+    margin-bottom: 15px;
+    padding-bottom: 20px;
+}
+
+#map-container {
+    width: 100%;
+    height: 50vh; /* Set map view height */
+    border-radius: 10px;
+    border: 3px solid var(--color-secondary-accent);
+    box-shadow: 0 0 20px rgba(40, 135, 176, 0.4);
+}
+
+
+/* ---------------------------------------------------- */
+/* LOGIN/REGISTER MODAL STYLES (Split Screen Design) */
+/* ---------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.login-modal {
+  width: 800px;
+  height: 580px; 
+  background: var(--color-modal-bg-dark); /* Dark green default */
+  border-radius: 15px;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  position: relative; 
+}
+
+/* New Report Modal Styles (Smaller, Central) */
+.report-modal {
+  width: 500px;
+  padding: 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  color: var(--color-form-text);
+}
+
+.report-modal h2 {
+  color: var(--color-text-dark);
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.report-form-group {
+    margin-bottom: 20px;
+}
+
+.report-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+}
+
+/* Ensure Report Form inputs are white */
+.report-form-group textarea,
+.report-city-input {
+    background-color: white; /* Explicitly set background */
+    color: var(--color-form-text);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.report-form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+
+.issue-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.issue-btn {
+    padding: 8px 15px;
+    border: 1px solid var(--color-primary);
+    background: white;
+    color: var(--color-primary);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.issue-btn.selected {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.report-proceed-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 20px;
+}
+
+.report-proceed-btn:hover {
+    background: #906395;
+}
+
+
+/* New Close Button Style */
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--color-text-dark); 
+  cursor: pointer;
+  z-index: 3010; 
+  padding: 5px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: var(--color-primary);
+}
+
+.modal-left {
+  flex: 1;
+  background-color: var(--color-modal-bg-dark); /* Midnight Green */
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-right {
+  flex: 1.5;
+  background-color: var(--color-modal-bg-accent); /* Flax Yellow */
+  padding: 40px 50px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form-card {
+  background: var(--color-form-bg);
+  padding: 40px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  color: var(--color-form-text);
+  font-size: 1.2rem; 
+  font-weight: 700;
+}
+
+.form-header .help-link {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.9rem; 
+  cursor: pointer;
+  text-decoration: none; 
+}
+
+.form-header .help-link:hover {
+    text-decoration: underline;
+}
+
+.form-field {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+/* FIX: Explicitly setting input background/text color for cross-browser theme compatibility */
+.form-field input {
+  width: 100%;
+  border: none;
+  padding: 10px 0;
+  outline: none;
+  font-size: 1rem;
+  color: var(--color-form-text); 
+  background-color: white; 
+}
+
+.form-field label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-primary); 
+  margin-bottom: 5px;
+}
+
+.form-submit-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--color-text-dark); /* Dark Button: Midnight Green */
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 15px;
+}
+
+.form-submit-btn:hover {
+  background: #105a57;
+}
+
+.create-account-link {
+  margin-top: 30px;
+  font-size: 0.9rem;
+  color: var(--color-form-text);
+  text-align: center;
+}
+
+.create-account-link span {
+  display: block;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--color-primary); 
+  text-decoration: underline;
+  margin-top: 5px;
+}
+
+/* Butterfly Illustration (Login - Access) */
+.butterfly-illustration {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.butterfly-container {
+    position: relative;
+    width: 200px; 
+    height: 200px;
+    transform: scale(1.2); 
+}
+.wing {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: var(--color-primary); 
+    border-radius: 60% 40% 60% 40% / 70% 30% 70% 30%; 
+    opacity: 0.8;
+    filter: blur(0.5px); 
+    transform-origin: 100% 100%;
+}
+.wing.top-left { top: 0; left: 0; transform: rotate(-20deg); }
+.wing.top-right { top: 0; right: 0; transform: rotate(20deg); }
+.wing.bottom-left { bottom: 0; left: 0; background: var(--color-secondary-accent); border-radius: 40% 60% 40% 60% / 30% 70% 30% 70%; transform: rotate(10deg); }
+.wing.bottom-right { bottom: 0; right: 0; background: var(--color-secondary-accent); border-radius: 40% 60% 40% 60% / 30% 70% 30% 70%; transform: rotate(-10deg); }
+.wing-dot { position: absolute; background: white; border-radius: 50%; opacity: 0.7; }
+.wing.top-left .wing-dot:nth-child(1), .wing.top-right .wing-dot:nth-child(1) { width: 8px; height: 8px; top: 20px; left: 20px; }
+.wing.top-left .wing-dot:nth-child(2), .wing.top-right .wing-dot:nth-child(2) { width: 5px; height: 5px; top: 40px; left: 45px; }
+.wing.bottom-left .wing-dot:nth-child(1), .wing.bottom-right .wing-dot:nth-child(1) { width: 6px; height: 6px; bottom: 15px; right: 25px; }
+.butterfly-body { position: absolute; width: 20px; height: 100px; background: var(--color-primary); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(90deg); z-index: 10; }
+.butterfly-antenna { position: absolute; width: 2px; height: 25px; background: var(--color-modal-bg-accent); top: 20px; z-index: 11; border-radius: 2px; transform-origin: bottom; }
+.butterfly-antenna.left { left: calc(50% - 15px); transform: rotate(-45deg); }
+.butterfly-antenna.right { left: calc(50% + 13px); transform: rotate(45deg); }
+
+
+/* Woman Silhouette Illustration (Register - Empowerment/Citizen) */
+.woman-silhouette-illustration {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+.woman-head {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: var(--color-primary); /* African Violet */
+    border-radius: 50%;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+.woman-neck {
+    position: absolute;
+    width: 25px;
+    height: 40px;
+    background: var(--color-secondary-accent); /* Blue NCS */
+    top: 190px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0 0 5px 5px;
+    z-index: 9;
+}
+.woman-shoulder {
+    position: absolute;
+    width: 120px;
+    height: 50px;
+    background: var(--color-secondary-accent); /* Blue NCS */
+    top: 220px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 50% 50% 0 0;
+    z-index: 8;
+}
+.woman-laurel {
+    position: absolute;
+    width: 100px;
+    height: 50px;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 11;
+    overflow: hidden;
+}
+.laurel-branch {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: var(--color-modal-bg-accent); /* Flax Yellow */
+    border-radius: 50%;
+    opacity: 0.7;
+}
+.laurel-branch.left {
+    top: 0;
+    left: -10px;
+    transform: rotate(-10deg);
+}
+.laurel-branch.right {
+    top: 0;
+    right: -10px;
+    transform: rotate(10deg);
+}
+
+
+@media (max-width: 850px) {
+  .login-modal {
+    width: 90%;
+    height: auto;
+    flex-direction: column;
+  }
+  .modal-left {
+    height: 180px; 
+  }
+  .modal-right {
+    padding: 30px 20px;
+  }
+  .butterfly-container {
+      transform: scale(1); 
+  }
+}
+@media (max-width: 768px) {
+  /* ... Mobile styles for main page ... */
+  .navbar {
+    padding: 0.8rem 1.5rem;
+    width: calc(100% - 20px);
+    border-radius: 15px; 
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  nav {
+    display: none;
+  }
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+  .hero-content p {
+    font-size: 1rem;
+  }
+  .hero-content {
+    margin-top: 25vh;
+  }
+  .hero-button-anchor {
+    margin-top: -150px;
+    margin-bottom: 150px;
+  }
+  .how-sliding {
+    padding: 60px 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+  .steps {
+    gap: 20px;
+  }
+  .card {
+    width: 100%;
+  }
+}
