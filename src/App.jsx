@@ -12,6 +12,8 @@ const App = () => {
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState('home');
+    const [isSelectingLocation, setIsSelectingLocation] = useState(false);
+    const [selectedLocation, setSelectedLocation] = useState(null);
 
     const openLoginModal = () => {
         setIsRegisterModalOpen(false);
@@ -31,6 +33,33 @@ const App = () => {
         } else {
             openLoginModal();
         }
+    };
+    
+    // Handle opening report from map (with location)
+    const handleOpenReportFromMap = (location) => {
+        if (!isLoggedIn) {
+            openLoginModal();
+            return;
+        }
+        setSelectedLocation(location);
+        setIsReportModalOpen(true);
+    };
+    
+    // Handle location selection from map
+    const handleLocationSelect = (location) => {
+        setSelectedLocation(location);
+    };
+    
+    // Start location selection mode
+    const startLocationSelection = () => {
+        setIsSelectingLocation(true);
+        setCurrentPage('map');
+    };
+    
+    // Cancel location selection
+    const cancelLocationSelection = () => {
+        setIsSelectingLocation(false);
+        setSelectedLocation(null);
     };
     
     const handleLogout = () => {
@@ -57,7 +86,12 @@ const App = () => {
         if (currentPage === 'map' && isLoggedIn) {
             return (
                 <div className="scrolling-content">
-                    <MapPlaceholder city={city} />
+                    <MapPlaceholder 
+                        city={city} 
+                        onLocationSelect={handleLocationSelect}
+                        isSelectingLocation={isSelectingLocation}
+                        onOpenReport={handleOpenReportFromMap}
+                    />
                 </div>
             );
         }
@@ -114,11 +148,16 @@ const App = () => {
             />
             <ReportModal
                 isOpen={isReportModalOpen}
-                onClose={() => setIsReportModalOpen(false)}
+                onClose={() => {
+                    setIsReportModalOpen(false);
+                    setIsSelectingLocation(false);
+                }}
                 openLogin={openLoginModal}
                 isLoggedIn={isLoggedIn}
                 setCity={setCity} 
-                navigateToMap={navigateToMap} 
+                navigateToMap={navigateToMap}
+                selectedLocation={selectedLocation}
+                onSelectLocationOnMap={startLocationSelection}
             />
             <Navbar
                 isLoggedIn={isLoggedIn}
