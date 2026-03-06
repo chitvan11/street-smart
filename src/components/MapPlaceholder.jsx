@@ -1,12 +1,11 @@
 import { useEffect, useRef } from "react";
 
 // --- MOCK DATA ---
-// Map coordinates for demonstrating city focus
 const MOCK_CITY_COORDINATES = {
     'DELHI': [28.7041, 77.1025],
     'NEW YORK': [40.7128, -74.0060],
     'LONDON': [51.509865, -0.118092],
-    'DEFAULT': [0, 0]
+    'DEFAULT': [28.7041, 77.1025] // Default to Delhi
 };
 
 const getCityCoordinates = (city) => {
@@ -14,62 +13,50 @@ const getCityCoordinates = (city) => {
     return MOCK_CITY_COORDINATES[key] || MOCK_CITY_COORDINATES['DEFAULT'];
 };
 
-// --- Map Component ---
 const MapPlaceholder = ({ city }) => {
-    // mapRef will hold the Leaflet map instance
     const mapRef = useRef(null);
-    const markerRef = useRef(null); // Ref to hold the marker instance
+    const markerRef = useRef(null);
 
     useEffect(() => {
-        // We know Leaflet (window.L) is loaded due to conditional rendering in App
-
         const coords = getCityCoordinates(city);
         const [lat, lng] = coords;
-        const zoomLevel = coords[0] === 0 ? 2 : 10; 
+        const zoomLevel = 12;
 
-        // 1. Initialize Map OR Update View
         if (!mapRef.current) {
-             // 1a. Initialize the Map (Only runs once on first render)
              const map = window.L.map('map-container', {
-                 zoomControl: true,
+                 zoomControl: false, 
              }).setView([lat, lng], zoomLevel);
              
-             mapRef.current = map; // Store map instance
+             mapRef.current = map;
 
-             // 1b. Add Tile Layer 
              window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                 attribution: '&copy; OpenStreetMap contributors'
              }).addTo(map);
              
         } else {
-             // Update existing map view when city prop changes
              mapRef.current.setView([lat, lng], zoomLevel);
-
-             // Clear old marker
              if (markerRef.current) {
                  markerRef.current.remove();
                  markerRef.current = null;
              }
         }
         
-        // 2. Add/Update Marker
         if (coords[0] !== 0) {
             const marker = window.L.marker([lat, lng]).addTo(mapRef.current)
-                .bindPopup(`Focus: ${city}`)
+                .bindPopup(`<b>${city}</b><br>Active Issues Area`)
                 .openPopup();
             markerRef.current = marker;
         }
 
-        // --- FIX: Guarantee Size Invalidation ---
-        // We call this inside a setTimeout to ensure the map container has fully finished
-        // rendering within the DOM before Leaflet tries to draw the tiles.
+        // --- THE GREY TILE FIX ---
+        // Forces Leaflet to recalculate the container size after the DOM paints
         const timer = setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
             if (mapRef.current) {
                  mapRef.current.invalidateSize(); 
             }
-        }, 10); // A very short delay is usually enough
+        }, 250); 
 
-        // 3. Cleanup function (Prevents Memory Leaks)
         return () => {
              clearTimeout(timer);
              if (mapRef.current) {
@@ -80,15 +67,21 @@ const MapPlaceholder = ({ city }) => {
              }
         };
         
-    }, [city]); // Dependency on city to re-run and update the map focus
+    }, [city]);
 
     return (
         <div className="map-placeholder">
-            <h2>🗺️ City Issues Map</h2>
-            <p style={{marginBottom: '20px'}}>
-                Displaying real-time issues in: **{city}**
-            </p>
+            
+            {/* Top Floating Search/Filter Bar */}
+            <div className="map-top-overlay">
+                <div className="search-bar">🔍 Search Location...</div>
+                <div className="filter-pill">📍 {city}</div>
+                <div className="filter-pill">🔴 Active Issues</div>
+            </div>
+
+            {/* The Map */}
             <div id="map-container"></div>
+
         </div>
     );
 };
